@@ -18,28 +18,22 @@
         <div class="row">
             <div class="col-3"></div>
             <div class="col-6">
-                <form action="">
+                <form action="" method="post">
+                    {%csrf_token%}
                     <div>
                         <label for="" class="fw-bold">UserName :</label>
-                        <input type="text" class="form-control" placeholder="Enter your Username">
+                        <input type="text" class="form-control" name="username" placeholder="Enter your Username">
                     </div>
                     <div class="mt-5">
                         <label for="" class="fw-bold">Task Title :</label>
-                        <input type="password" class="form-control" placeholder="Add New Task">
+                        <input type="text" class="form-control" name="task" placeholder="Add New Task">
                     </div>
 
                     <div class="mt-5">
                         <label for="" class="fw-bold">Description :</label>
-                        <textarea name="" class="form-control" id="textarea" cols="30" rows="5"></textarea>
+                        <input class="form-control" name="description" cols="30" rows="5">
                     </div>
-                    <div class="mt-5">
-                        <label for="" class="fw-bold">Status :</label>
-                        <select name="" id="">
-                            <option value="">Not Completed</option>
-                            <option value="">Partially Completed</option>
-                            <option value="">Completed</option>
-                        </select>
-                    </div>
+                
 
                     <div class="mt-5 mb-5 text-center">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
