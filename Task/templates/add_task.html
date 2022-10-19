@@ -1,0 +1,36 @@
+{%extends 'base.html'%}
+
+{%block body_block%}
+
+<div class="container border border-5 border-dark mt-5 p-5 bg-info">
+    <u>
+        <h1 class="text-center fw-bolder">My To-do App</h1>
+    </u>
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-6">
+            <form action="" method="post">
+                {%csrf_token%}
+                
+                <div class="mt-5">
+                    <label for="" class="fw-bold">Task Title :</label>
+                    <input type="text" class="form-control" name="task" placeholder="Add New Task">
+                </div>
+
+               
+
+                <div class="mt-5 mb-5 text-center">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">CLOSE</button>
+                    <button type="submit" id="add" class="btn btn-primary">ADD</button>
+                </div>
+
+                
+                <div class="col-3"></div>
+            </form>
+        </div>
+
+    </div>
+
+</div>
+
+{%endblock%}

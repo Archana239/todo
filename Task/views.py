@@ -1,6 +1,9 @@
 from django.shortcuts import render,redirect
 from django.views.generic import View
 from Task.models import Task
+from Task.forms import RegistrationForm,LoginForm
+from django.contrib.auth.models import User
+from django.contrib.auth import authenticate,login
 # Create your views here.
 
 class IndexView(View):
@@ -17,13 +20,13 @@ class RegisterView(View):
 
 class Add_todo_View(View):
     def get(self,request,*args,**kwargs):
-        return render(request,"add_todo.html")
+        return render(request,"add_task.html")
 
     def post(self,request,*args,**kwargs):
-        name = request.POST.get("username")
+        user = request.user
         task = request.POST.get("task")
-        Task.objects.create(user=name,task_name=task)
-        return render(request,"add_todo.html")
+        Task.objects.create(user=request.user,task_name=task)
+        return render(request,"add_task.html")
 
 class Task_List_View(View):
     def get(self,request,*args,**kwargs):
@@ -41,3 +44,35 @@ class Task_Delete_View(View):
         id = kwargs.get("id")
         Task.objects.get(id=id).delete()
         return redirect("todo-all")
+
+class RegistrationView(View):
+    def get(self,request,*args,**kwargs):
+        form = RegistrationForm()
+        return render(request,"register.html",{"form":form})
+    
+    def post(self,request,*args,**kwargs):
+        form = RegistrationForm(request.POST)
+        if form.is_valid():
+            User.objects.create_user(**form.cleaned_data)
+            return redirect("todo-all")
+        else:
+            return render(request,"register.html",{"form":form})
+
+class LoginView(View):
+    def get(self,request,*args,**kwargs):
+        form = LoginForm()
+        return render(request,"login.html",{"form":form})
+
+    def post(self,request,*args,**kwargs):
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            uname = form.cleaned_data.get("username")
+            pwd = form.cleaned_data.get("password")
+            usr = authenticate(request,username=uname,password=pwd)
+            if usr:
+                login(request,usr)
+                return redirect("todo-all")
+            else:
+                return render(request,"login.html",{"form":form})
+
+
