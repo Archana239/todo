@@ -3,7 +3,7 @@ from django.views.generic import View
 from Task.models import Task
 from Task.forms import RegistrationForm,LoginForm
 from django.contrib.auth.models import User
-from django.contrib.auth import authenticate,login
+from django.contrib.auth import authenticate,login,logout
 # Create your views here.
 
 class IndexView(View):
@@ -30,8 +30,12 @@ class Add_todo_View(View):
 
 class Task_List_View(View):
     def get(self,request,*args,**kwargs):
-        qs = Task.objects.all()
-        return render(request,"task-list.html",{"todos":qs})
+        if request.user.is_authenticated:
+
+            qs = Task.objects.filter(user=request.user)
+            return render(request,"task-list.html",{"todos":qs})
+        else:
+            return redirect("signin")
 
 class Task_Detail_View(View):
     def get(self,request,*args,**kwargs):
@@ -74,5 +78,9 @@ class LoginView(View):
                 return redirect("todo-all")
             else:
                 return render(request,"login.html",{"form":form})
+
+def signout_view(request,*args,**kwargs):
+    logout(request)
+    return redirect("signin")
 
 
