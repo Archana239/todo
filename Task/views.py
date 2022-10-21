@@ -6,7 +6,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.utils.decorators import method_decorator
-# Create your views here.
+
 
 def signin_reqiured(fn):
     def wrapper(request,*args,**kwargs):
