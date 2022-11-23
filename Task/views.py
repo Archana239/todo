@@ -1,11 +1,12 @@
 from django.shortcuts import render,redirect
-from django.views.generic import View
+from django.views.generic import View,ListView,DetailView,UpdateView
 from Task.models import Task
-from Task.forms import RegistrationForm,LoginForm
+from Task.forms import RegistrationForm,LoginForm,TaskUpdateForm
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
 
 
 def signin_reqiured(fn):
@@ -42,21 +43,32 @@ class Add_todo_View(View):
         return redirect("todo-all")
 
 @method_decorator(signin_reqiured,name="dispatch")
-class Task_List_View(View):
-    def get(self,request,*args,**kwargs):
-        if request.user.is_authenticated:
+class Task_List_View(ListView):
+    model = Task
+    template_name = "task-list.html"
+    context_object_name = "todos"
 
-            qs = Task.objects.filter(user=request.user)
-            return render(request,"task-list.html",{"todos":qs})
-        else:
-            return redirect("signin")
+    def get_queryset(self):
+        return Task.objects.filter(user = self.request.user)
+    # def get(self,request,*args,**kwargs):
+    #     if request.user.is_authenticated:
+
+    #         qs = Task.objects.filter(user=request.user)
+    #         return render(request,"task-list.html",{"todos":qs})
+    #     else:
+    #         return redirect("signin")
 
 @method_decorator(signin_reqiured,name="dispatch")
-class Task_Detail_View(View):
-    def get(self,request,*args,**kwargs):
-        id = kwargs.get("id")
-        task = Task.objects.get(id=id)
-        return render(request,"task-detail.html",{"todo":task})
+class Task_Detail_View(DetailView):
+    model = Task
+    template_name = "task-detail.html"
+    context_object_name = "todo"
+    pk_url_kwarg = "id"
+
+    # def get(self,request,*args,**kwargs):
+    #     id = kwargs.get("id")
+    #     task = Task.objects.get(id=id)
+    #     return render(request,"task-detail.html",{"todo":task})
 
 @method_decorator(signin_reqiured,name="dispatch")
 class Task_Delete_View(View):
@@ -104,4 +116,19 @@ def signout_view(request,*args,**kwargs):
     logout(request)
     return redirect("register")
 
+class Task_Update_View(UpdateView):
+    model = Task
+    template_name = "todo-update.html"
+    form_class = TaskUpdateForm
+    pk_url_kwarg = "id"
+    success_url = reverse_lazy("todo-all")
+
+#django -> views -> generic -> class View()
+#                              class ListView()
+#                              class DetailView()
+#                              class UpdateView()
+#                              class DeleteView()
+#                              class CreateView()
+#                              class TemplateView()
+#                              class FormView()
 
