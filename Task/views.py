@@ -7,8 +7,34 @@ from django.contrib.auth import authenticate,login,logout
 from django.contrib import messages
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
+from Task.models import Task
+from rest_framework import serializers
+from rest_framework.viewsets import ModelViewSet
+from rest_framework.response import Response
+from rest_framework import permissions,authentication
 
+class TodoSerializer(serializers.ModelSerializer):
+    user= serializers.CharField(read_only=True)
+    created_date= serializers.DateTimeField(read_only=True)
+    class Meta:
+        model=Task
+        fields=['task_name','user','created_date']
 
+class TodosView(ModelViewSet):
+    serializer_class=TodoSerializer
+    queryset=Task.objects.all()
+    authentication_classes=[authentication.TokenAuthentication]
+    permission_classes=[permissions.IsAuthenticated]
+
+    def create(self,request,*args,**kwargs):
+        serializer=TodoSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors)
+    def get_queryset(self):
+        return Task.objects.filter(user=self.request.user)
 def signin_reqiured(fn):
     def wrapper(request,*args,**kwargs):
         if not request.user.is_authenticated:

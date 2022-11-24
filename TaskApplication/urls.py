@@ -13,12 +13,18 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from rest_framework.authtoken import views
+from Task.views import TodosView
 from django.contrib import admin
 from django.urls import path
 from Task.views import IndexView,LoginView,RegisterView,Add_todo_View, RegistrationView,Task_List_View,Task_Detail_View,Task_Delete_View,RegistrationView,LoginView,Task_Update_View
 from Task.views import signout_view
+from rest_framework.routers import DefaultRouter
+router=DefaultRouter()
+router.register("todos",TodosView,basename="todos")
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('token/',views.obtain_auth_token),
     path("home/",IndexView.as_view()),
     path("login/",LoginView.as_view()),
     path("register/",RegisterView.as_view()),
@@ -31,4 +37,4 @@ urlpatterns = [
     path("accounts/logout",signout_view,name="signout"),
     path("todos/<int:id>/update",Task_Update_View.as_view(),name = "todo-update")
     
-]
+]+router.urls
