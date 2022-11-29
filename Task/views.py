@@ -15,10 +15,10 @@ from rest_framework import permissions,authentication
 
 class TodoSerializer(serializers.ModelSerializer):
     user= serializers.CharField(read_only=True)
-    created_date= serializers.DateTimeField(read_only=True)
+    
     class Meta:
         model=Task
-        fields=['task_name','user','created_date']
+        fields=['task_name','user']
 
 class TodosView(ModelViewSet):
     serializer_class=TodoSerializer
